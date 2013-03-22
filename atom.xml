@@ -4,7 +4,7 @@
   <title><![CDATA[My Octopress Blog]]></title>
   <link href="http://chunlong.github.com/atom.xml" rel="self"/>
   <link href="http://chunlong.github.com/"/>
-  <updated>2013-03-22T21:12:20+08:00</updated>
+  <updated>2013-03-22T21:19:40+08:00</updated>
   <id>http://chunlong.github.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -14,11 +14,20 @@
 
   
   <entry>
-    <title type="html"><![CDATA[my first blog]]></title>
-    <link href="http://chunlong.github.com/blog/2013/03/22/my-first-blog/"/>
-    <updated>2013-03-22T21:11:00+08:00</updated>
-    <id>http://chunlong.github.com/blog/2013/03/22/my-first-blog</id>
-    <content type="html"><![CDATA[
+    <title type="html"><![CDATA[伪极客真屌丝的平淡江湖路]]></title>
+    <link href="http://chunlong.github.com/blog/2013/02/27/my-first-blog/"/>
+    <updated>2013-02-27T11:27:00+08:00</updated>
+    <id>http://chunlong.github.com/blog/2013/02/27/my-first-blog</id>
+    <content type="html"><![CDATA[<ul>
+<li><p>从来没有写博客的习惯，却意外得知有这么有意思的一个写博客的方式。</p>
+
+<p>工作大半年，无论是技术上还是生活里，都感慨颇丰，以后就在这里记录我这个伪极客真屌丝的平淡江湖路吧。</p>
+
+<p>一入江湖深似海,再回首已是百年身</p>
+
+<p>共勉</p></li>
+</ul>
+
 ]]></content>
   </entry>
   
