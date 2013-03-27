@@ -9,8 +9,8 @@
   <meta name="author" content="chunlong.lv">
 
   
-  <meta name="description" content="
-">
+  <meta name="description" content="Java代理 代理是基本的设计模式之一,他是你为了提供额外的或者不同的操作,而插入的用来代替&#8221;实际&#8221;对象的对象。
+假设你有一个类实现了一些核心功能。但是有的时候为了方便测试或者是统计。你需要加入一些日志信息或者是统计代码。如果直接加入&#8221;核心&#8221; &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -92,7 +92,223 @@
   </header>
 
 
-<div class="entry-content">
+<div class="entry-content"><h2>Java代理</h2>
+
+<ul>
+<li><p> 代理是基本的设计模式之一,他是你为了提供额外的或者不同的操作,而插入的用来代替&#8221;实际&#8221;对象的对象。
+假设你有一个类实现了一些核心功能。但是有的时候为了方便测试或者是统计。你需要加入一些日志信息或者是统计代码。如果直接加入&#8221;核心&#8221;类会造成混乱.而且以后你有可能会删除这些&#8221;额外&#8221;的代码.
+这种情况下你就应该使用代理.比如下面的例子:</p>
+
+<pre><code>  Package xyz；   
+  import java.util.logging.*   
+  public class doThings{   
+      private Logger logger=Logger.getLogger(this.getClass().getName());   
+      public void doSomeThing(String name){   
+      logger.log(Level.INFO,"log start....");   
+      dosomething();  
+      logger.log(Level.INFO,"log ends....");   
+      }   
+  }
+</code></pre>
+
+<p>   在这里,只有dosomething 才是你真正关心的.但是你在某些时刻需要记录一些日志信息,也许以后又不需要了.你不得不在以后修改这个代码.这是非常糟糕的.
+   因此你将这些&#8221;额外&#8221;的工作交给代理去做.就像下面这样:</p>
+
+<pre><code>      public interface doThings{   
+          public void doSomeThing(String arg);   
+      }
+      public class doSpecificThings implements doThings{   
+          public void doSomeThing(String args){   
+          System.out.println("doSpecificThings" + args);   
+          }   
+      }
+      public class ProxyDoThings Implements doThings{   
+          private Logger logger=Logger.getLogger(this.getClass().getName());   
+          private doThings dothings;   
+          public StaticProxyTalk(doThings do){   
+              this.dothings=do;   
+          }   
+          public void doSomeThing(String arg){   
+              log("log start....");   
+              dothings.doSomeThing(arg);   
+              log("log ending...");   
+          }   
+          private void log(String message){   
+          logger.log(Level.INFO,message)   
+      }
+</code></pre>
+
+<p>   这样你只要在不同的时候选择使用 doThings 的不同的实现就能随意转换你要使用的具体的对象了.比如你需要打log,就使用代理类,不需要就使用委托类.</p>
+
+<ol>
+<li>代理需要实现和委托类相同的接口,所以委托类抽象成一个接口.</li>
+<li>代理实现这个委托类的接口,同时接受一个委托类接口的实现类的对象.用这个对象完成代理的功能.</li>
+<li>在完成相应功能的基础上添加代理的额外代码在本例中就是打log.</li>
+</ol>
+</li>
+</ul>
+
+
+<h2>Java动态代理</h2>
+
+<ul>
+<li><p> Java 动态代理比代理更进了一步,因为代理类不在需要程序员手动敲入,而是通过java的反射机制自动生成.这个代理类是在程序运行时生成的,编译时期更本不存在这样的类.也就意味着,无论接口怎么改你都不需要修改你的代理类,因为
+ 代理类不是你写的,好吧,有点像废话&#8230;&#8230;这也是&#8221;动态&#8221;代理的名字的由来.</p>
+
+<ul>
+<li><p>动态代理有三个重要的类或者接口:</p>
+
+<ul>
+<li> java.lang.reflect.Proxy：这是 Java 动态代理机制的主类，它提供了一组静态方法来为一组接口动态地生成代理类及其对象。
+
+<pre><code> // 方法 1: 该方法用于获取指定代理对象所关联的调用处理器
+ static InvocationHandler getInvocationHandler(Object proxy) 
+ // 方法 2：该方法用于获取关联于指定类装载器和一组接口的动态代理类的类对象 注意 这里是代理类的类对象,也就是Class 而不是 代理类的对象
+ //这在动态生成代理类的时候用来判断代理类是否已经生成了
+ static Class getProxyClass(ClassLoader loader, Class[] interfaces) 
+ // 方法 3：该方法用于判断指定类对象是否是一个动态代理类
+ static boolean isProxyClass(Class cl) 
+ // 方法 4：该方法用于为指定类装载器、一组接口及调用处理器生成动态代理类实例 这里生成的就是代理类的一个实例
+ static Object newProxyInstance(ClassLoader loader, Class[] interfaces, InvocationHandler h) 
+</code></pre></li>
+<li> java.lang.reflect.InvocationHandler:这是调用处理器接口,它自定义了一个 invoke 方法,用于集中处理在动态代理类对象上的方法调用,通常在该方法中实现对委托类的代理访问。
+
+<pre><code> // 所有通过动态代理调用的方法最后都会在这个方法内部实现调用 第一个参数既是代理类实例，第二个参数是被调用的方法对象
+ // 第三个方法是调用参数。调用处理器根据这三个参数进行预处理或分派到委托类实例上反射执行
+ Object invoke(Object proxy, Method method, Object[] args)
+ 每次生成动态代理类对象时都需要指定一个实现了该接口的调用处理器对象（参见 Proxy 静态方法 4 的第三个参数）。
+</code></pre></li>
+<li> java.lang.ClassLoader：这是类装载器类.
+
+<pre><code> 负责将类的字节码装载到 Java 虚拟机（JVM）中并为其定义类对象，然后该类才能被使用。Proxy 静态方法生成动态代理类同样需要通过类装载器来进行装载才能使用,它与普通类的唯一区别就是其字节码是由 JVM 在运行时动态生成的而非预存在于任何一个 .class 文件中。
+</code></pre></li>
+</ul>
+</li>
+<li><p>现在回头看看生成代理类实例的Proxy的静态方法 static Object newProxyInstance(ClassLoader loader, Class[] interfaces, InvocationHandler h)  你的代理类需要实现的接口就是由参数Class[] interfaces决定,你的代理类的
+方法调用的分发和代理的额外操作由参数InvocationHandler h决定.</p></li>
+<li><p>那么该如何动态创建代理类的呢?</p>
+
+<pre><code>  // InvocationHandlerImpl 实现了 InvocationHandler 接口，并能实现方法调用从代理类到委托类的分派转发
+  // 其内部通常包含指向委托类实例的引用，用于真正执行分派转发过来的方法调用
+  InvocationHandler handler = new InvocationHandlerImpl(..); 
+  // 通过 Proxy 为包括 Interface 接口在内的一组接口动态创建代理类的类对象
+  Class clazz = Proxy.getProxyClass(classLoader, new Class[] { Interface.class, ... }); 
+  // 通过反射从生成的类对象获得构造函数对象
+  Constructor constructor = clazz.getConstructor(new Class[] { InvocationHandler.class }); 
+  // 通过构造函数对象创建动态代理类实例
+  Interface Proxy = (Interface)constructor.newInstance(new Object[] { handler }); 
+</code></pre>
+
+<p><em>可以简化成:</em></p>
+
+<pre><code>  // InvocationHandlerImpl 实现了 InvocationHandler 接口，并能实现方法调用从代理类到委托类的分派转发
+  InvocationHandler handler = new InvocationHandlerImpl(..); 
+  // 通过 Proxy 直接创建动态代理类实例
+  Interface proxy = (Interface)Proxy.newProxyInstance( classLoader, new Class[] { Interface.class }, handler ); 
+</code></pre>
+
+<p><em>看下面这个例子:</em></p>
+
+<pre><code>  package com.liuc.test.think.chapter14;  
+  import java.lang.reflect.InvocationHandler;  
+  import java.lang.reflect.Method;  
+  import java.lang.reflect.Proxy;  
+  //需要实现  InvocationHandler 这个接口作为参数传入newProxyInstance 创建代理类的实例
+  class DynamicProxyHandler implements InvocationHandler{  
+  private Object proxied;  
+  public DynamicProxyHandler(Object proxied) {  
+  this.proxied=proxied;  
+  }  
+  //重写invoke方法,实现代理的额外处理.这里也完成了方法调用的转发
+  @Override  
+  public Object invoke(Object proxy, Method method, Object[] args)  
+          throws Throwable {  
+      System.out.println("******proxy:"+proxy.getClass()+",method:"+method+",args:"+args);  
+      if (args!=null) {  
+          for(Object arg:args){  
+          System.out.println("        "+arg);  
+          }  
+      }  
+      //看到没有,就算是对接口的调用重定向到对代理的调用,可是最后还是会重定向到对实现了接口的委托类的调用
+      //这里的 proxied 就是实现了接口的委托类也就是下面的realObject
+      return method.invoke(proxied, args);  
+      }    
+  }    
+  interface Interface{  
+      void doSomething();  
+      void somethingElse(String arg);  
+  }    
+  class RealObject implements Interface{  
+      @Override  
+      public void doSomething() {  
+          System.out.println("doSomething");      
+      }  
+      @Override  
+      public void somethingElse(String arg) {  
+          System.out.println("somethingElse:"+arg);      
+      }      
+  }  
+
+  public class SimpleDynamicProxy {  
+      public static void consumer(Interface inte){  
+      inte.doSomething();  
+      inte.somethingElse("bonbo");  
+      }  
+      public static void main(String[] args) {  
+          RealObject realObject=new RealObject();  
+          consumer(new RealObject());  
+          System.out.println("=================");  
+          //在这里创建了代理类的实例
+          Interface proxy=(Interface) Proxy.newProxyInstance(Interface.class.getClassLoader(), new Class[]{Interface.class}, new DynamicProxyHandler(realObject));  
+          consumer(proxy);  
+      }  
+  } 
+</code></pre>
+
+<p>  <em>proxy是一个接口的引用,但是会被重定向到是对代理的调用,但是对代理的调用最终还是会重定向到对委托类的调用.</em></p></li>
+<li><p>代理类又是如何动态生成的呢?看源码</p>
+
+<p><em>先看newProxyInstance</em></p>
+
+<pre><code>  public static Object newProxyInstance(ClassLoader loader, Class&lt;?&gt;[] interfaces, InvocationHandler h) 
+  throws IllegalArgumentException { 
+  // 检查 h 不为空，否则抛异常
+      if (h == null) { 
+      throw new NullPointerException(); 
+      }
+      // 获得与制定类装载器和一组接口相关的代理类类型对象
+      Class cl = getProxyClass(loader, interfaces); 
+      // 通过反射获取构造函数对象并生成代理类实例
+      try { 
+          Constructor cons = cl.getConstructor(constructorParams); 
+          return (Object) cons.newInstance(new Object[] { h }); 
+      } catch (NoSuchMethodException e) { throw new InternalError(e.toString()); 
+      } catch (IllegalAccessException e) { throw new InternalError(e.toString()); 
+      } catch (InstantiationException e) { throw new InternalError(e.toString()); 
+      } catch (InvocationTargetException e) { throw new InternalError(e.toString()); 
+      } 
+  }
+</code></pre>
+
+<p>  <em>getProxyClass 内的实现</em></p>
+
+<pre><code>  // 动态地生成代理类的字节码数组   
+  byte[] proxyClassFile = ProxyGenerator.generateProxyClass( proxyName, interfaces); 
+  try { 
+      // 动态地定义新生成的代理类
+      proxyClass = defineClass0(loader, proxyName, proxyClassFile, 0, proxyClassFile.length); 
+  } catch (ClassFormatError e) { 
+      throw new IllegalArgumentException(e.toString()); 
+  } 
+  // 把生成的代理类的类对象记录进 proxyClasses 表
+  proxyClasses.put(proxyClass, null); 
+</code></pre></li>
+</ul>
+
+
+<p>另外动态代理仅支持 interface</p></li>
+</ul>
+
 </div>
 
 
