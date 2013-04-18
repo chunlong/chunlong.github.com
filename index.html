@@ -137,11 +137,12 @@ Integer d = (Integer)c;
 <p>这里你有可能还有疑问,arry本身就是一个Object数组,所以不能转换成Intger数组.似乎这个列子不太有力的说明T被擦除成了Object
 我们把代码稍加改动,再看看:</p>
 
-<p>public T[] rep(){return (T[])arry;}
+<pre><code>public T[] rep(){return (T[])arry;}
 //编译,运行都通过
 gai.rep();
 //编译过,运行不过
-Integer[] a = gai.rep();</p>
+Integer[] a = gai.rep();
+</code></pre>
 
 <p>这说明了什么呢? 说明rep()方法被调用的时候,进行的转型(T[])是正确的,没有异常,而Integer [] a = gai.rep();是不对的,说明,T的类型肯定不是Integer,而是被擦除了.
 这是我的理解,不对的地方请指正!
