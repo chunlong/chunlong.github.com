@@ -1,0 +1,59 @@
+---
+layout: post
+title: "Java 泛型擦除"
+date: 2013-04-17 19:51
+comments: true
+categories: 
+---
+*	就我的理解而言,泛型的作用体现在编译期.但是当程序运行起来的时候,所有有关于泛型的类型信息都没有了,都被擦除了.这么说,可能比较难以理解,我们可以通过泛型数组来理解.一举两得.
+
+*	请看这段代码:
+		
+		public class GenericArray<T> {
+			private T[] arry;
+			public GenericArray(int size){
+			arry=(T[])new Object[size];
+			}
+			public void put(int index,T item){
+			arry[index]=item;
+			}
+			public T get(int index) {return arry[index];}
+			public T[] rep(){return arry;}
+			public static void main(String[] args) {
+			GenericArray<Integer> gai=new GenericArray<Integer>(10);
+			//编译通过,运行不通过 抛出转型异常
+			//Integer[] ia=gai.rep();
+			Object [] oa=gai.rep();
+			}
+
+		}
+		
+	在这段代码里,rep()方法将会返回T[].在你看来应该是Integer[],但是如果你试着调用他,并且把他交给Integer[]的引用,那么你将获得一个转型的异常.这就是因为擦除在起作用.
+	当程序运行时,你作为类型参数传入的Integer,已经被擦除了,擦除的程度取决于T,如果T extended A,那么就擦除到类型A,如果只有一个T,那么就被擦除到根类,Object.所以.T实际上在运行的时候是Object,将一个
+	Object数组转型为Integer数组是会有异常的.
+	
+	这里提一个题外话,就是向下转型.也许有同学会对向下转型产生疑问.为什么不能直接把一个Object对象转型为Integer呢?父类转型为子类,不是很合理的向下转型吗?这里需要明确一点.向下转型只在,父类引用实际持有子类对象的时候,将这个父类引用强制转型成
+	子类的引用才是Ok的.也就是这样:
+	
+		//ok
+		Object a = new Integer(10);
+		Integer b = (Integer)a;
+		//转型异常
+		Object c = new Object();
+		Integer d = (Integer)c;
+		
+	这里你有可能还有疑问,arry本身就是一个Object数组,所以不能转换成Intger数组.似乎这个列子不太有力的说明T被擦除成了Object
+	我们把代码稍加改动,再看看:
+	
+		public T[] rep(){return (T[])arry;}
+		//编译,运行都通过
+		gai.rep();
+		//编译过,运行不过
+		Integer[] a = gai.rep();
+	
+	这说明了什么呢? 说明rep()方法被调用的时候,进行的转型(T[])是正确的,没有异常,而Integer [] a = gai.rep();是不对的,说明,T的类型肯定不是Integer,而是被擦除了.
+	这是我的理解,不对的地方请指正!
+	关于泛型先说这么多,以后有时间再写.
+	
+	
+	
