@@ -113,7 +113,7 @@
 <p><img src="https://raw.github.com/chunlong/chunlong.github.com/master/images/mcs-dependency.png" alt="Alt text" /></p>
 
 <ul>
-<li><p>mcs采用Srping MVC实现。全局只存在一个MVC的Controller实例RestServerController（继承关系 MethodController &#8211;> RestServerController &#8211;> AbstractRestController)。Spring的MVC Dispatcher将所有请求都发送的到此Controller后，再有mcs自行实现的method2Class mapping完成从“method名称”到某个具体ApiCommand的映射，并最终完成执行。
+<li><p>mcs采用Srping MVC实现。全局只存在一个MVC的Controller实例RestServerController（继承关系 MethodController&#8211;>RestServerController&#8211;>AbstractRestController)。Spring的MVC Dispatcher将所有请求都发送的到此Controller后，再有mcs自行实现的method2Class mapping完成从“method名称”到某个具体ApiCommand的映射，并最终完成执行。
 ApiCommand的基类AbstractApiCommand中实现了类似于拦截器的功能以完成如校验等功能。</p></li>
 <li><p>RestServerController 主要工作,接口名称到具体接口执行类的映射 一个map结构,依据几口名称获取对应的接口执行类;登陆校验;用户状态校验;</p></li>
 <li><p>AbstractRestController 主要工作,验证基本的参数是否完全,包括sig(唯一标示一个请求,缓存结构),app信息,sessionKey等; validateExtRequiredParams方法 (在RestServerController 实现)又做了一遍登陆校验..不明白.</p></li>
