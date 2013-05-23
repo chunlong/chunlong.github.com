@@ -136,8 +136,9 @@ public String(String original) {
 }
 </code></pre>
 
-<p>这是 java.lang.String 的一部分源代码。其中有一个构造函数 public String(String original)  用一个String去构造另一个函数，大部分时间这个构造函数是没有用的，正如注解里写的那样&#8221;Unless an explicit copy of {@code original} is needed, use of this constructor isunnecessary since Strings are immutable.&#8221;
-不过，我们暂时不必关系这个构造函数存在的意义。先看看里面的代码 &#8220;originalValue.length > size&#8221;  字符串持有的字符数组的长度，比这个字符串的长度要大。再看看一开始对count的定义，count 就是这个String对象里字符的个数&#8221;/<em>* The count is the number of characters in the String. </em>/&#8221;,既然如此，那么为什么count大小又和
+<p>这是 java.lang.String 的一部分源代码。其中有一个构造函数 public String(String original)  用一个String去构造另一个函数，大部分时间这个构造函数是没有用的，正如注解里写的那样Unless an explicit copy of {@code original} is needed, use of this constructor isunnecessary since Strings are immutable.</p>
+
+<p>不过，我们暂时不必关系这个构造函数存在的意义。先看看里面的代码 originalValue.length>size 字符串持有的字符数组的长度，比这个字符串的长度要大。再看看一开始对count的定义，count 就是这个String对象里字符的个数/<em>* The count is the number of characters in the String. </em>/,既然如此，那么为什么count大小又和
 字符数组的长度不一样了呢?</p>
 
 <p>于是，开始google，搜了老半天，终于有了一点眉目。说是，这个字符数组是有可能被很多的String共享的，在共享同一个 char[] value的时候，就有可能因为每个对象实际拥有的字符数量不同而修改count了。
@@ -165,7 +166,7 @@ String(int offset, int count, char value[]) {
 }
 </code></pre>
 
-看到第三个 私有构造方法上的注解了吗!!&#8221;// Package private constructor which shares value array for speed.&#8221; 终于找到了!看看是怎么具体实现的，查看调用者，有一个subString(int beginIndex,int endIndex),看看这个方法的实现：
+看到第三个 私有构造方法上的注解了吗!!// Package private constructor which shares value array for speed. 终于找到了!看看是怎么具体实现的，查看调用者，有一个subString(int beginIndex,int endIndex),看看这个方法的实现：
 
 <pre><code> public String substring(int beginIndex, int endIndex) {
     if (beginIndex &lt; 0) {
@@ -183,9 +184,10 @@ String(int offset, int count, char value[]) {
 }
 </code></pre>
 
-当你的构造一个subString 不是它本身的时候，他就new String(offset + beginIndex, endIndex - beginIndex, value);这里的offset 就不是0了，count也不是value的length，但是value还是共享了父String的value，这样就出现了共享了字符数组，并且
-数组长度和count不一致
-写一个小例子测试一下：
+<p>当你的构造一个subString 不是它本身的时候，他就new String(offset + beginIndex, endIndex - beginIndex, value);这里的offset 就不是0了，count也不是value的length，但是value还是共享了父String的value，这样就出现了共享了字符数组，并且
+数组长度和count不一致。</p>
+
+<p>写一个小例子测试，并且单步调试一下（因为value和count都是私有变量，不这么做看不到）：</p>
 
 <pre><code>public static void main(String[] args) {
     String b = "abcdefghit";
@@ -196,7 +198,8 @@ String(int offset, int count, char value[]) {
 </code></pre>
 
 <p>结果如下图：
-<img src="https://raw.github.com/chunlong/chunlong.github.com/master/images/result.png" alt="Alt text" /></p></li>
+<img src="https://raw.github.com/chunlong/chunlong.github.com/master/images/result.png" alt="Alt text" />
+看到b.value的id和sub.value的id是一致了。说明确实是共享一个char 数组。并且，sub的count也是3而不是10.至此都明白了。</p></li>
 </ul>
 
 </div>
