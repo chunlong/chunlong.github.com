@@ -139,7 +139,7 @@ public String(String original) {
 }
 </code></pre>
 
-<p>这是 java.lang.String 的一部分源代码。其中有一个构造函数 public String(String original)  用一个String去构造另一个函数，大部分时间这个构造函数是没有用的，正如注解里写的那样Unless an explicit copy of {@code original} is needed, use of this constructor isunnecessary since Strings are immutable.</p>
+<p>&amp;nbsp&amp;nbsp这是 java.lang.String 的一部分源代码。其中有一个构造函数 public String(String original)  用一个String去构造另一个函数，大部分时间这个构造函数是没有用的，正如注解里写的那样Unless an explicit copy of {@code original} is needed, use of this constructor isunnecessary since Strings are immutable.</p>
 
 <p>不过，我们暂时不必关系这个构造函数存在的意义。先看看里面的代码 originalValue.length>size 字符串持有的字符数组的长度，比这个字符串的长度要大。再看看一开始对count的定义，count 就是这个String对象里字符的个数/<em>* The count is the number of characters in the String. </em>/,既然如此，那么为什么count大小又和
 字符数组的长度不一样了呢?</p>
