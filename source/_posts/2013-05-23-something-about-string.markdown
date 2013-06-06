@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "关于String的一个问题"
+title: "关于String的共享字符数组"
 date: 2013-05-23 21:54
 comments: true
 categories: 
