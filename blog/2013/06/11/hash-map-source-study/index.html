@@ -5,12 +5,12 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Hash Map 源码学习 - God Chun</title>
+  <title>HashMap 源码学习 - God Chun</title>
   <meta name="author" content="chunlong.lv">
 
   
-  <meta name="description" content="前段时间看了看Hash Map 源代码，趁着端午小长假记录一下自己的学习所得。
-Hash Map实际存储数据的对象是一个数组，数组的每第一个元素都是一个单链的头部。数组的每一个元素是一个内部类Entry 的对象。 // 默认的Entry数组的大小
+  <meta name="description" content="前段时间看了看HashMap 源代码，趁着端午小长假记录一下自己的学习所得。
+HashMap实际存储数据的对象是一个数组，数组的每第一个元素都是一个单链的头部。数组的每一个元素是一个内部类Entry 的对象。 // 默认的Entry数组的大小
 static final int &hellip;">
   
 
@@ -70,7 +70,7 @@ static final int &hellip;">
   
   <header>
     
-      <h1 class="entry-title">Hash Map 源码学习</h1>
+      <h1 class="entry-title">HashMap 源码学习</h1>
     
     
       <p class="meta">
@@ -93,8 +93,8 @@ static final int &hellip;">
   </header>
 
 
-<div class="entry-content"><p>前段时间看了看Hash Map 源代码，趁着端午小长假记录一下自己的学习所得。
-Hash Map实际存储数据的对象是一个数组，数组的每第一个元素都是一个单链的头部。数组的每一个元素是一个内部类Entry 的对象。</p>
+<div class="entry-content"><p>前段时间看了看HashMap 源代码，趁着端午小长假记录一下自己的学习所得。
+HashMap实际存储数据的对象是一个数组，数组的每第一个元素都是一个单链的头部。数组的每一个元素是一个内部类Entry 的对象。</p>
 
 <pre><code>// 默认的Entry数组的大小
 static final int DEFAULT_INITIAL_CAPACITY = 16;
@@ -429,7 +429,7 @@ public HashMap(Map&lt;? extends K, ? extends V&gt; m) {
                 //将e插入到新链表的表头
                 e.next = newTable[i];
                 newTable[i] = e;
-                //e 只想老练表的下一个元素
+                //e 指向老链表的下一个元素
                 e = next;
             } while (e != null);
         }
@@ -737,7 +737,7 @@ private final class KeySet extends AbstractSet&lt;K&gt; {
   <ul id="recent_posts">
     
       <li class="post">
-        <a href="/blog/2013/06/11/hash-map-source-study/">Hash Map 源码学习</a>
+        <a href="/blog/2013/06/11/hash-map-source-study/">HashMap 源码学习</a>
       </li>
     
       <li class="post">
