@@ -1,12 +1,12 @@
 ---
 layout: post
-title: "Hash Map 源码学习"
+title: "HashMap 源码学习"
 date: 2013-06-11 10:34
 comments: true
 categories: 
 ---
-前段时间看了看Hash Map 源代码，趁着端午小长假记录一下自己的学习所得。
-Hash Map实际存储数据的对象是一个数组，数组的每第一个元素都是一个单链的头部。数组的每一个元素是一个内部类Entry 的对象。
+前段时间看了看HashMap 源代码，趁着端午小长假记录一下自己的学习所得。
+HashMap实际存储数据的对象是一个数组，数组的每第一个元素都是一个单链的头部。数组的每一个元素是一个内部类Entry 的对象。
 	// 默认的Entry数组的大小
 	static final int DEFAULT_INITIAL_CAPACITY = 16;
 
@@ -317,7 +317,7 @@ transfer方法，该方法在linkedHashMap 出于效率的考虑重写过，这�
                     //将e插入到新链表的表头
                     e.next = newTable[i];
                     newTable[i] = e;
-                    //e 只想老练表的下一个元素
+                    //e 指向老链表的下一个元素
                     e = next;
                 } while (e != null);
             }
